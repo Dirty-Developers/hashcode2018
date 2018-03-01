@@ -4,10 +4,11 @@ class Ride(object):
 
     def __init__(self, id, sr, sc, er, ec, st, et):
         self.id = id
-        self.start_point = (sr, sc)
-        self.end_point = (er, ec)
-        self.start_time = st
-        self.end_time = et
+        self.start_point = (int(sr), int(sc))
+        self.end_point = (int(er), int(ec))
+        self.start_time = int(st)
+        self.end_time = int(et)
+        self.reward = abs(int(er)-int(sr)) + abs(int(ec)-int(sc))
 
     def __str__(self):
         return str(self.id)
@@ -23,4 +24,4 @@ if __name__ == '__main__':
             i += 1
 
     for r in rides:
-        print(r)
+        print("{} -> {}".format(r, r.reward))
