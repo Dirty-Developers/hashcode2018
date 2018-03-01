@@ -45,4 +45,4 @@ if __name__ == '__main__':
     cars = [Car() for _ in range(F)]
 
     for r in rides:
-        print("{} -> {}".format(r, r.reward))
+        print("{} -> {}".format(r, r.distance))
