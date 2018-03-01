@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
+from sys import argv
 
 
 class Ride(object):
@@ -18,6 +19,16 @@ class Ride(object):
 
     def __str__(self):
         return str(self.id)
+
+    def __repr__(self):
+        return str(self)
+
+    def __cmp__(self, other):
+        if self.start_time < other.start_time:
+            return -1
+        if self.start_time > other.start_time:
+            return 1
+        return 0
 
 
 class Car(object):
@@ -45,25 +56,43 @@ class Car(object):
         return len(ride) + bonus
 
     def voyage_ratio(self, ride):
-        return self.voyage_points(ride)/(self.get_timelapse(ride) + len(ride))
+        return float(self.voyage_points(ride))/(self.get_timelapse(ride) + len(ride))
 
+    def __str__(self):
+        return str(len(self.rides)) + ' ' + ' '.join([str(x) for x in self.rides])
+
+    def __repr__(self):
+        return str(self)
 
 
 if __name__ == '__main__':
     rides = []
     i = 0
-    with open('inputs/a_example.in', 'r') as f:
+    with open(argv[1], 'r') as f:
         R, C, F, N, BONUS, T = (int(x) for x in f.readline()[:-1].split(' '))
         for l in f.readlines():
             rides.append(Ride(i, *l[:-1].split(' ')))
             i += 1
 
     cars = [Car() for _ in range(F)]
+    assigned_cars = []
+    assigned_rides = {}
+
+    rides.sort()
 
     for r in rides:
-        print("viaje: {}  distancia: {}".format(r, len(r)))
+        t = min([a.current_time for a in cars])
+        if assigned_rides.has_key(r.id):
+            continue
+        best_car = None
+        best_ratio = 0
         for c in cars:
-            print("Voyage ratio " + str(c.voyage_ratio(r)))
+            ratio = c.voyage_ratio(r)
+            if ratio > best_ratio and t >= c.current_time:
+                best_ratio = ratio
+                best_car = c
+        if best_car:
+            best_car.assign_ride(r)
+            assigned_rides[r.id] = True
 
-
-
+    print('\n'.join([str(c) for c in cars]))
